@@ -94,6 +94,7 @@ void 			Parser::processing(int ac, char **av)
 {
 	std::string size;
 	std::string flag;
+	int	argCounter = 0;
 
 	if (ac < 3 || ac > 9){
 		throw CustomExeption(m_usage);
@@ -104,16 +105,22 @@ void 			Parser::processing(int ac, char **av)
 		m_parsedInform.fromFile = false;
 		size = std::string(av[2]);
 		readSize(size);
+	} else {
+		throw CustomExeption(m_usage);
 	}
 
 	for (int i = 3; i < ac; ++i) {
 		flag = std::string(av[i]);
 		for (size_t j = 0; j < m_flag_regex.size(); ++j) {
 			if (std::regex_match(flag, m_flag_regex[j])) {
-				(this->*m_fill_func[j])(ac, av);
+				argCounter++;
+				(this->*m_fill_func[j])(ac, av, &argCounter);
 			}
 		}
 	}
+
+	if (ac >= 4 && argCounter < ac - 3)
+		throw CustomExeption("Undefined symbols in input!!!\n" + m_usage);
 }
 
 void 			Parser::parseFile(char *fileName)
@@ -134,7 +141,7 @@ t_parsedInform 		*Parser::getParserInform()
 }
 
 
-void 			Parser::fillHeuristic(int ac, char **av)
+void 			Parser::fillHeuristic(int ac, char **av, int *argCounter)
 {
 	std::string heuristic;
 	int findHeuristic = 0;
@@ -143,9 +150,10 @@ void 			Parser::fillHeuristic(int ac, char **av)
 		heuristic = std::string(av[i]);
 		for (size_t j = 0; j < m_heuristic_regex.size(); ++j) {
 			if (std::regex_match(heuristic, m_heuristic_regex[j])) {
-				if (!findHeuristic)
+				if (!findHeuristic){
 					findHeuristic = 1;
-				else
+					(*argCounter)++;
+				} else
 					throw CustomExeption("Multiple heuristic found!!!\n" + m_usage);
 				m_parsedInform.heuristic = static_cast<eHeuristic>(j);
 			}
@@ -155,7 +163,7 @@ void 			Parser::fillHeuristic(int ac, char **av)
 		throw CustomExeption("Heuristic is not found!!!\n" + m_usage);
 }
 
-void 			Parser::fillHeuristicWeight(int ac, char **av)
+void 			Parser::fillHeuristicWeight(int ac, char **av, int *argCounter)
 {
 	std::string heuristicWeight;
 	int findHeuristicWeight = 0;
@@ -163,9 +171,10 @@ void 			Parser::fillHeuristicWeight(int ac, char **av)
 	for (int i = 3; i < ac; ++i) {
 		heuristicWeight = std::string(av[i]);
 		if (std::regex_match(heuristicWeight, m_digit_regex)) {
-			if (!findHeuristicWeight)
+			if (!findHeuristicWeight){
 				findHeuristicWeight = 1;
-			else
+				(*argCounter)++;
+			} else
 				throw CustomExeption("Multiple heuristic weight found!!!\n" + m_usage);
 			m_parsedInform.heuristicWeight = std::stoi(heuristicWeight);
 		}
@@ -174,7 +183,7 @@ void 			Parser::fillHeuristicWeight(int ac, char **av)
 		throw CustomExeption("Heuristic weight is not found!!!\n" + m_usage);
 }
 
-void 			Parser::fillAlgorithm(int ac, char **av)
+void 			Parser::fillAlgorithm(int ac, char **av, int *argCounter)
 {
 	std::string algorithm;
 	int findAlgorithm = 0;
@@ -183,9 +192,10 @@ void 			Parser::fillAlgorithm(int ac, char **av)
 		algorithm = std::string(av[i]);
 		for (size_t j = 0; j < m_algorithm_regex.size(); ++j) {
 			if (std::regex_match(algorithm, m_algorithm_regex[j])) {
-				if (!findAlgorithm)
+				if (!findAlgorithm) {
 					findAlgorithm = 1;
-				else
+					(*argCounter)++;
+				} else
 					throw CustomExeption("Multiple algorithm found!!!\n" + m_usage);
 				m_parsedInform.algorithm = static_cast<eAlgorithm>(j);
 			}

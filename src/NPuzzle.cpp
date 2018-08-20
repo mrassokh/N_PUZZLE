@@ -148,7 +148,7 @@ void 		NPuzzle::CheckAndSettingStartState()
 						m_start->getSize(),m_start->getEmptyPos())){
 		std::cout << "Input gamefield is solvable" << std::endl;
 	} else 	{
-		throw CustomExeption("Input gamefield is not solvable!\n");
+		throw CustomExeption("Input gamefield is not solvable!");
 	}
 	m_start->setHeuristic((this->*m_getHeutisticFunc[m_heuristic])(m_start));
 	m_start->setPathLenght(0);
@@ -457,7 +457,7 @@ void 			NPuzzle::AStar()
 		}
 		m_openPriority.pop();
 		//if choosen state already investigated - skip it
- 		if (m_closedStates.find(e) != m_closedStates.end()){
+ 		if (m_closedStates.find(e) != m_closedStates.end()) {
 			delete e;
 			continue;
 		}
@@ -602,17 +602,19 @@ void 			NPuzzle::printOutput()
 			std::cout<< "uniform cost algorithm"  << std::endl;
 			break;
 	}
-	std::cout<< "WITH HEURISTIC: ";
-	switch (m_heuristic) {
-		case MANHATTAN:
-			std::cout<< "MANHATTAN"  << std::endl;
-			break;
-		case MANHATTAN_AND_LC:
-			std::cout<< "MANHATTAN AND LINEAR CONFLICT"  << std::endl;
-			break;
-		case HAMMING:
-			std::cout<< "HAMMING"  << std::endl;
-			break;
+	if (m_algorithm != UNIFORM_COST) {
+		std::cout<< "WITH HEURISTIC: ";
+		switch (m_heuristic) {
+			case MANHATTAN:
+				std::cout<< "MANHATTAN"  << std::endl;
+				break;
+			case MANHATTAN_AND_LC:
+				std::cout<< "MANHATTAN AND LINEAR CONFLICT"  << std::endl;
+				break;
+			case HAMMING:
+				std::cout<< "HAMMING"  << std::endl;
+				break;
+		}
 	}
 	std::cout << "SOLUTION TIME COMPLEXITY : " << m_timeComplexity << std::endl;
 	std::cout << "SOLUTION SIZE COMPLEXITY : " << m_sizeComplexity << std::endl;
