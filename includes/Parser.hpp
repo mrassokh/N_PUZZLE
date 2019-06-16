@@ -37,9 +37,9 @@ private:
 	void 					initRegexArrays();
 	void 					initUsage();
 
-	void 					fillHeuristic(int ac, char **av);
-	void 					fillAlgorithm(int ac, char **av);
-	void 					fillHeuristicWeight(int ac, char **av);
+	void 					fillHeuristic(int ac, char **av, int *argCounter);
+	void 					fillAlgorithm(int ac, char **av, int *argCounter);
+	void 					fillHeuristicWeight(int ac, char **av, int *argCounter);
 
 	void 					readFile(char *fileName);
 	void 					readSize(std::string &str);
@@ -75,6 +75,6 @@ private:
 	std::vector<std::regex>	m_heuristic_regex;
 	std::vector<std::regex>	m_algorithm_regex;
 
-	std::vector<void (Parser::*)(int ac, char **av)> m_fill_func;
+	std::vector<void (Parser::*)(int ac, char **av, int *argCounter)> m_fill_func;
 };
 #endif
